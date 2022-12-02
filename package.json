@@ -1,0 +1,40 @@
+{
+  "name": "@ungap/esx",
+  "version": "0.0.0",
+  "description": "",
+  "main": "./cjs/index.js",
+  "scripts": {
+    "bench": "node test/benchmark.js",
+    "build": "npm run cjs && npm run rollup:es && npm run rollup:json && npm run test && npm run bench && npm run size",
+    "cjs": "ascjs esm cjs",
+    "rollup:es": "rollup --config rollup/es.config.js",
+    "rollup:json": "rollup --config rollup/json.config.js",
+    "test": "c8 node test/index.js && c8 report -r html",
+    "size": "echo -e \"\\e[1mes.js\\e[0m   $(cat es.js | brotli | wc -c)\"; echo -e \"\\e[1mjson.js\\e[0m $(cat json.js | brotli | wc -c)\"",
+    "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info"
+  },
+  "keywords": ["JSX", "ESX", "template literal", "tag"],
+  "author": "Andrea Giammarchi",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-terser": "^0.1.0",
+    "ascjs": "^5.0.1",
+    "c8": "^7.12.0",
+    "rollup": "^3.5.1"
+  },
+  "module": "./esm/index.js",
+  "type": "module",
+  "unpkg": "es.js",
+  "exports": {
+    ".": {
+      "import": "./esm/index.js",
+      "default": "./cjs/index.js"
+    },
+    "./json": {
+      "import": "./esm/json.js",
+      "default": "./cjs/json.js"
+    },
+    "./package.json": "./package.json"
+  }
+}
