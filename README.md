@@ -118,14 +118,14 @@ function B() {}
 <details>
 <summary><strong>The Token Struct</strong></summary>
 
-|  field       |                 type                   |                                                                                               description                                                                                           |
-| :----------- |:--------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| type         | number                                 | any of the `Token` types: `Token.ATTRIBUTE`, `Token.COMPONENT`, `Token.ELEMENT`, `Token.FRAGMENT`, `Token.INTERPOLATION` or `Token.STATIC`.                                                         |
-| attributes   | (attribute \| interpolation)[]?         | meaningful only for *components* or *elements*, it's an array of *attributes* and/or *interpolations* tokens.                                                                                       |
-| children     | (attribute \| interpolation \| token)[]? | meaningful only for *components*, *elements* or *fragments*, here referred as *token*, it's an array of *static*, *interpolation*, or *token* children.                                             |
-| dynamic      | boolean                                | when `true` it means that future updates will change the token `value` with latest passed interpolation. *interpolation* and, optionally, *attribute* are the only one with `dynamic` equal `true`. |
-| name         | string                                 | the *attribute*, *component* or *element* name, otherwise the string `#fragment`, `#interpolation` or `#static`.                                                                                    |
-| value        | unknown?                               | for an *attribute*, an *interpolation*, or a *static* token, it's the `value` it represents. It's always a *string* for non-dynamic attributes and static tokens, it could be anything else in other cases. *element* and *fragment* don't carry any value while *component* points at whatever reference was passed to the factory *ESX(...)* function to create the tag. |
+|  field       |                 type                     |                                                                 description                                                                 |
+| :----------- |:----------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------:|
+| type         | number                                   | any of the `Token` types: `Token.ATTRIBUTE`, `Token.COMPONENT`, `Token.ELEMENT`, `Token.FRAGMENT`, `Token.INTERPOLATION` or `Token.STATIC`. |
+| attributes   | (attribute \| interpolation)[]?          | meaningful only for *components* or *elements*, it's an array of *attributes* and/or *interpolations* tokens. |
+| children     | (attribute \| interpolation \| token)[]? | meaningful only for *components*, *elements* or *fragments*, here referred as *token*, it's an array of *static*, *interpolation*, or *token* children. |
+| dynamic      | boolean                                  | when `true` it means that future updates will change the token `value` with latest passed interpolation. *interpolation* and, optionally, *attribute* are the only one with `dynamic` equal `true`. |
+| name         | string                                   | the *attribute*, *component* or *element* name, otherwise the string `#fragment`, `#interpolation` or `#static`. |
+| value        | unknown?                                 | for an *attribute*, an *interpolation*, or a *static* token, it's the `value` it represents. It's always a *string* for non-dynamic attributes and static tokens, it could be anything else in other cases. *element* and *fragment* don't carry any value while *component* points at whatever reference was passed to the factory *ESX(...)* function to create the tag. |
 
 </details>
 
