@@ -124,6 +124,12 @@ const parse = (template, nmsp, components) => {
 };
 
 const templates = new WeakMap;
+
+/**
+ * A template literal tag factory function able to recognize within its content passed components.
+ * @param {object} nmsp the env/namespace that defines components for the resulting tag.
+ * @returns {function} the `esx` tag function that will recognize passed components.
+ */
 const ESX = (nmsp = OBJECT) => {
   const components = new Set(keys(nmsp));
   return (template, ...values) => (

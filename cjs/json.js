@@ -31,7 +31,7 @@ const fromJSON = (esx, nmsp = OBJECT) => {
   switch (type) {
     case ATTRIBUTE: {
       const {dynamic, name, value} = esx;
-      return new Token(ATTRIBUTE, VOID, VOID, dynamic, name, value);
+      return new Token(ATTRIBUTE, VOID, VOID, !!dynamic, name, value);
     }
     case COMPONENT:
     case ELEMENT: {
@@ -59,7 +59,7 @@ const toJSON = esx => {
   switch (type) {
     case ATTRIBUTE: {
       const {dynamic, name, value} = esx;
-      return {type, dynamic, name, value};
+      return dynamic ? {type, dynamic: 1, name, value} : {type, name, value};
     }
     case COMPONENT:
     case ELEMENT: {
