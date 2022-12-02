@@ -1,6 +1,6 @@
 {
   "name": "@ungap/esx",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "./cjs/index.js",
   "scripts": {
@@ -13,7 +13,12 @@
     "size": "echo -e \"\\e[1mes.js\\e[0m   $(cat es.js | brotli | wc -c)\"; echo -e \"\\e[1mjson.js\\e[0m $(cat json.js | brotli | wc -c)\"",
     "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info"
   },
-  "keywords": ["JSX", "ESX", "template literal", "tag"],
+  "keywords": [
+    "JSX",
+    "ESX",
+    "template literal",
+    "tag"
+  ],
   "author": "Andrea Giammarchi",
   "license": "ISC",
   "devDependencies": {
