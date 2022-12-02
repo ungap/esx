@@ -1,5 +1,7 @@
 # ESX as Template Literal Tag
 
+[![build status](https://github.com/ungap/esx/actions/workflows/node.js.yml/badge.svg)](https://github.com/ungap/esx/actions) [![Coverage Status](https://coveralls.io/repos/github/ungap/esx/badge.svg?branch=main)](https://coveralls.io/github/ungap/esx?branch=main) [![CSP strict](https://webreflection.github.io/csp/strict.svg)](https://webreflection.github.io/csp/#-csp-strict)
+
 <sup><sub>**EXPERIMENTAL** ⚠</sub></sup>
 
 This project is based on [TC39 discussions](https://es.discourse.group/t/proposal-esx-as-core-js-feature/1511) and it tokenizes *JSX* like written template literals through a unified *ESXToken* class.
