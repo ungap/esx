@@ -20,6 +20,8 @@ export class Token {
   static FRAGMENT =       FRAGMENT;
   static INTERPOLATION =  INTERPOLATION;
   static STATIC =         STATIC;
+
+  /** @private */
   constructor(
     type,
     attributes, children,
@@ -33,6 +35,7 @@ export class Token {
     this.value = value;
   }
 
+  /** @type {object | null} an accessor to forward properties */
   get properties() {
     switch (this.type) {
       case ELEMENT:
