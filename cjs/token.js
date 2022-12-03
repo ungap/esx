@@ -39,9 +39,9 @@ class Token {
     switch (this.type) {
       case ELEMENT:
       case COMPONENT:
-        const properties = {};
         const {attributes} = this;
         if (attributes !== EMPTY) {
+          const properties = {};
           for (const entry of attributes) {
             if (entry.type === ATTRIBUTE)
               properties[entry.name] = entry.value;
