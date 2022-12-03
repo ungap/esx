@@ -14,9 +14,7 @@ import {
 
   EMPTY,
   OBJECT,
-  VOID,
-
-  keys
+  VOID
 } from './constants.js';
 
 import {Token} from './token.js';
@@ -45,8 +43,7 @@ export const fromJSON = (esx, nmsp = OBJECT) => {
       return new Token(type, VOID, esx.children.map(revive, nmsp), false, FRAGMENT_NAME, VOID);
     case INTERPOLATION: {
       const {value: v} = esx;
-      const value = keys(v).length === 1 ? v : fromJSON(v, nmsp);
-      return new Token(type, VOID, VOID, true, INTERPOLATION_NAME, value);
+      return new Token(type, VOID, VOID, true, INTERPOLATION_NAME, v.i || fromJSON(v, nmsp));
     }
     case STATIC:
       return new Token(type, VOID, VOID, false, STATIC_NAME, esx.value);

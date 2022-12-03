@@ -22,10 +22,9 @@ import {
 
 import {Token} from './token.js';
 
-const newTree = (prev, token) => ({prev, token});
 const noSpaces = str => str.replace(/^[\r\n]\s*|\s*[\r\n]\s*$/g, '');
 
-const parse = (template, nmsp, components) => {
+const parse = (template, nmsp, components, tree) => {
   const addStatic = ({index}, content) => {
     const chunk = noSpaces(esx.slice(i, index));
     if (chunk) {
@@ -33,15 +32,10 @@ const parse = (template, nmsp, components) => {
       let i = 0, j = i;
       do {
         j = chunk.indexOf(NUL, i);
-        if (j < 0) {
-          const value = noSpaces(chunk.slice(i));
-          if (value)
-            addToken(new Token(STATIC, VOID, VOID, false, STATIC_NAME, value));
-        }
+        if (j < 0)
+          addChunk(noSpaces(chunk.slice(i)));
         else {
-          const value = noSpaces(chunk.slice(i, j));
-          if (value)
-            addToken(new Token(STATIC, VOID, VOID, false, STATIC_NAME, value));
+          addChunk(noSpaces(chunk.slice(i, j)));
           const token = new Token(INTERPOLATION, VOID, VOID, true, INTERPOLATION_NAME, VOID);
           addToken(token);
           updates.push(token);
@@ -53,37 +47,41 @@ const parse = (template, nmsp, components) => {
     }
     i = index + content.length;
   };
+  const addChunk = value => {
+    if (value)
+      addToken(new Token(STATIC, VOID, VOID, false, STATIC_NAME, value));
+  };
   const addToken = token => {
-    tree.token.children.push(token);
+    tree[0].children.push(token);
   };
   const pushTree = token => {
-    if (tree)
+    if (tree.length)
       addToken(token);
     else
-      tree = newTree(VOID, token);
-    tree = newTree(tree, token);
+      tree = [token];
+    tree = [token, tree];
   };
   const updates = [];
   const esx = template.join(NUL);
   const tag = /(<(\/)?(\S*?)>)|(<(\S+)([^>/]*?)(\/)?>)/g;
-  let tree, match, i = 0;
+  let match, i = 0;
   while (match = tag.exec(esx)) {
     const [content, _1, closing, other, _4, name, attrs, selfClosing] = match;
     switch (content) {
       case '<>': {
         addStatic(match, content);
-        pushTree(new Token(FRAGMENT, VOID, [], false, FRAGMENT_NAME, VOID));
+        pushTree(new Token(FRAGMENT, EMPTY, [], false, FRAGMENT_NAME, VOID));
         break;
       }
       case '</>': {
         addStatic(match, content);
-        tree = tree.prev;
+        tree = tree[1];
         break;
       }
       default: {
         addStatic(match, content);
         if (closing)
-          tree = tree.prev;
+          tree = tree[1];
         else {
           let attributes = EMPTY;
           if (attrs && attrs.trim()) {
@@ -109,17 +107,17 @@ const parse = (template, nmsp, components) => {
           const value = isComponent ? nmsp[tagName] : VOID;
           pushTree(new Token(type, attributes, children, false, tagName, value));
           if (selfClosing)
-            tree = tree.prev;
+            tree = tree[1];
         }
         break;
       }
     }
   }
-  const {token: root} = tree;
+  const token = tree[0];
   const arrow = values => {
     for (let i = 0; i < updates.length; i++)
       updates[i].value = values[i];
-    return root;
+    return token;
   };
   templates.set(template, arrow);
   return arrow;
@@ -136,7 +134,7 @@ const ESX = (nmsp = OBJECT) => {
   const components = new Set(keys(nmsp));
   return (template, ...values) => (
     templates.get(template) ||
-    parse(template, nmsp, components)
+    parse(template, nmsp, components, EMPTY)
   )(values);
 };
 

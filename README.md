@@ -136,7 +136,7 @@ function B() {}
   * **transformer** - the tokenizer takes less than 1ms to transform even complex templates, closing it to zero time to update the resulting structure
   * **memory** - each unique template generates *one and one only* token, updating interpolations and values *only* when the same template is executed again. This procedure grants no extra memory or Garbage Collector pressure when the same template is reused multiple times, also weakly relating the template with its own tokens to keep the heap under control
   * **serialization** - complex structures can still be serialized in less than 1ms and revived in even less than that
-  * **size** - once minified and compressed, the [es.js](./es.js) file is around 900bytes while the [json.js](./json.js) helper is around 600bytes
+  * **size** - once minified and compressed, the [es.js](./es.js) file is around 850bytes while the [json.js](./json.js) helper is around 600bytes
 
 </details>
 
