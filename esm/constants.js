@@ -1,7 +1,6 @@
 /** (c) Andrea Giammarchi - ISC */
 
 const {assign, freeze, keys} = Object;
-
 export {assign, keys};
 
 export const ATTRIBUTE =      1;
@@ -18,4 +17,5 @@ export const STATIC_NAME = '#static';
 export const EMPTY = freeze([]);
 export const NUL = '\x00';
 export const OBJECT = {};
-export const VOID = void 0;
+
+export const facade = (type, name, dynamic, value) => ({type, value, name, dynamic});

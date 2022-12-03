@@ -15,14 +15,13 @@ import {
   EMPTY,
   NUL,
   OBJECT,
-  VOID,
 
-  keys
+  facade, keys
 } from './constants.js';
 
 import {Token} from './token.js';
 
-const newTree = (prev, token) => ({prev, token});
+const newTree = (token, prev) => ({token, prev});
 const noSpaces = str => str.replace(/^[\r\n]\s*|\s*[\r\n]\s*$/g, '');
 
 const parse = (template, nmsp, components) => {
@@ -33,16 +32,11 @@ const parse = (template, nmsp, components) => {
       let i = 0, j = i;
       do {
         j = chunk.indexOf(NUL, i);
-        if (j < 0) {
-          const value = noSpaces(chunk.slice(i));
-          if (value)
-            addToken(new Token(STATIC, VOID, VOID, false, STATIC_NAME, value));
-        }
+        if (j < 0)
+          addString(noSpaces(chunk.slice(i)));
         else {
-          const value = noSpaces(chunk.slice(i, j));
-          if (value)
-            addToken(new Token(STATIC, VOID, VOID, false, STATIC_NAME, value));
-          const token = new Token(INTERPOLATION, VOID, VOID, true, INTERPOLATION_NAME, VOID);
+          addString(noSpaces(chunk.slice(i, j)));
+          const token = facade(INTERPOLATION, INTERPOLATION_NAME, true);
           addToken(token);
           updates.push(token);
           i = j + 1;
@@ -53,6 +47,10 @@ const parse = (template, nmsp, components) => {
     }
     i = index + content.length;
   };
+  const addString = value => {
+    if (value)
+      addToken(facade(STATIC, STATIC_NAME, false, value));
+  };
   const addToken = token => {
     tree.token.children.push(token);
   };
@@ -60,8 +58,8 @@ const parse = (template, nmsp, components) => {
     if (tree)
       addToken(token);
     else
-      tree = newTree(VOID, token);
-    tree = newTree(tree, token);
+      tree = newTree(token);
+    tree = newTree(token, tree);
   };
   const updates = [];
   const esx = template.join(NUL);
@@ -72,7 +70,7 @@ const parse = (template, nmsp, components) => {
     switch (content) {
       case '<>': {
         addStatic(match, content);
-        pushTree(new Token(FRAGMENT, VOID, [], false, FRAGMENT_NAME, VOID));
+        pushTree(new Token(FRAGMENT, EMPTY, [], FRAGMENT_NAME));
         break;
       }
       case '</>': {
@@ -93,10 +91,9 @@ const parse = (template, nmsp, components) => {
             while (match = values.exec(attrs)) {
               const [_0, _1, name, _3, _4, quote, value] = match;
               if (quote)
-                attributes.push(new Token(ATTRIBUTE, VOID, VOID, false, name, value));
+                attributes.push(facade(ATTRIBUTE, name, false, value));
               else {
-                const type = name ? ATTRIBUTE : INTERPOLATION;
-                const token = new Token(type, VOID, VOID, true, name || INTERPOLATION_NAME, VOID);
+                const token = facade(name ? ATTRIBUTE : INTERPOLATION, name || INTERPOLATION_NAME, true);
                 attributes.push(token);
                 updates.push(token);
               }
@@ -106,8 +103,8 @@ const parse = (template, nmsp, components) => {
           const tagName = name || other;
           const isComponent = components.has(tagName);
           const type = isComponent ? COMPONENT : ELEMENT;
-          const value = isComponent ? nmsp[tagName] : VOID;
-          pushTree(new Token(type, attributes, children, false, tagName, value));
+          const value = isComponent ? nmsp[tagName] : tagName;
+          pushTree(new Token(type, attributes, children, tagName, value));
           if (selfClosing)
             tree = tree.prev;
         }

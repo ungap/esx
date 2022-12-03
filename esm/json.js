@@ -14,9 +14,8 @@ import {
 
   EMPTY,
   OBJECT,
-  VOID,
 
-  keys
+  facade
 } from './constants.js';
 
 import {Token} from './token.js';
@@ -31,25 +30,25 @@ export const fromJSON = (esx, nmsp = OBJECT) => {
   switch (type) {
     case ATTRIBUTE: {
       const {dynamic, name, value} = esx;
-      return new Token(ATTRIBUTE, VOID, VOID, !!dynamic, name, value);
+      return facade(ATTRIBUTE, name, !!dynamic, value);
     }
     case COMPONENT:
     case ELEMENT: {
       const {attributes, children, name} = esx;
       const attrs = attributes ? attributes.map(revive, nmsp) : EMPTY;
       const childrn = children ? children.map(revive, nmsp) : EMPTY;
-      const value = type === ELEMENT ? VOID : nmsp[name];
-      return new Token(type, attrs, childrn, false, name, value);
+      const value = type === ELEMENT ? name : nmsp[name];
+      return new Token(type, attrs, childrn, name, value);
     }
     case FRAGMENT:
-      return new Token(type, VOID, esx.children.map(revive, nmsp), false, FRAGMENT_NAME, VOID);
+      return new Token(type, EMPTY, esx.children.map(revive, nmsp), FRAGMENT_NAME);
     case INTERPOLATION: {
       const {value: v} = esx;
-      const value = keys(v).length === 1 ? v : fromJSON(v, nmsp);
-      return new Token(type, VOID, VOID, true, INTERPOLATION_NAME, value);
+      const value = v.type ? fromJSON(v, nmsp) : v.i;
+      return facade(type, INTERPOLATION_NAME, true, value);
     }
     case STATIC:
-      return new Token(type, VOID, VOID, false, STATIC_NAME, esx.value);
+      return facade(type, STATIC_NAME, false, esx.value);
   }
 };
 

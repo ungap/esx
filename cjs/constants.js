@@ -2,7 +2,6 @@
 /** (c) Andrea Giammarchi - ISC */
 
 const {assign, freeze, keys} = Object;
-
 exports.assign = assign;
 exports.keys = keys;
 
@@ -32,5 +31,6 @@ const NUL = '\x00';
 exports.NUL = NUL;
 const OBJECT = {};
 exports.OBJECT = OBJECT;
-const VOID = void 0;
-exports.VOID = VOID;
+
+const facade = (type, name, dynamic, value) => ({type, value, name, dynamic});
+exports.facade = facade;

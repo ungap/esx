@@ -25,32 +25,32 @@ export class Token {
   constructor(
     type,
     attributes, children,
-    dynamic, name, value
+    name, value
   ) {
     this.type = type;
     this.attributes = attributes;
     this.children = children;
-    this.dynamic = dynamic;
     this.name = name;
     this.value = value;
   }
 
+  /** @type {boolean} an accessor to forward properties */
+  get dynamic() {
+    return false;
+  }
+
   /** @type {object | null} an accessor to forward properties */
   get properties() {
-    switch (this.type) {
-      case ELEMENT:
-      case COMPONENT:
-        const properties = {};
-        const {attributes} = this;
-        if (attributes !== EMPTY) {
-          for (const entry of attributes) {
-            if (entry.type === ATTRIBUTE)
-              properties[entry.name] = entry.value;
-            else
-              assign(properties, entry.value);
-          }
-          return properties;
-        }
+    const {attributes} = this;
+    if (attributes !== EMPTY) {
+      const properties = {};
+      for (const {type, value, name} of attributes) {
+        if (type === ATTRIBUTE)
+          properties[name] = value;
+        else
+          assign(properties, value);
+      }
+      return properties;
     }
     return null;
   }

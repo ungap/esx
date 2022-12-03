@@ -25,18 +25,19 @@ const {attributes: empty} = outcome;
 assertFields(outcome, {
   type: Token.ELEMENT,
   attributes: empty,
-  properties: null
+  properties: null,
+  dynamic: false
 });
 
 
 var outcome = esx`<div a="1" b='2' c=${3} ${{d: 4}} />`;
 assert(JSON.stringify(outcome.properties), '{"a":"1","b":"2","c":3,"d":4}');
-assert(outcome.attributes[0].properties, null);
+assert(outcome.attributes[0].properties, void 0);
 
 var outcome = esx`<>a ${'b'} c</>`;
 assertFields(outcome, {
   type: Token.FRAGMENT,
-  attributes: void 0,
+  attributes: empty,
   properties: null
 });
 
