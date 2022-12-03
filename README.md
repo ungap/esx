@@ -27,7 +27,8 @@ esx`
 `;
 
 function MyComponent(props, ...children) {
-  // note: props doesn't need ${...props} or ...${props}
+  // note: props doesn't need ${...props} (invalid JS)
+  //       or ...${props} (ambiguous and unnecesary template chunks)
   //       because any value can be passed as interpolation
   return esx`
     <div ${props}>
