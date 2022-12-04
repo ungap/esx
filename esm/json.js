@@ -40,7 +40,7 @@ export const fromJSON = (esx, nmsp = OBJECT) => {
       return new Token(type, attrs, childrn, false, name, value);
     }
     case FRAGMENT:
-      return new Token(type, VOID, esx.children.map(revive, nmsp), false, FRAGMENT_NAME, VOID);
+      return new Token(type, EMPTY, esx.children.map(revive, nmsp), false, FRAGMENT_NAME, VOID);
     case INTERPOLATION: {
       const {value: v} = esx;
       return new Token(type, VOID, VOID, true, INTERPOLATION_NAME, v.i || fromJSON(v, nmsp));
