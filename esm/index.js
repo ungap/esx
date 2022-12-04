@@ -13,9 +13,6 @@ import {
   STATIC_NAME,
 
   EMPTY,
-  NUL,
-  OBJECT,
-  VOID,
 
   keys
 } from './constants.js';
@@ -24,20 +21,24 @@ import {Token} from './token.js';
 
 const noSpaces = str => str.replace(/^[\r\n]\s*|\s*[\r\n]\s*$/g, '');
 
-const parse = (template, nmsp, components, tree) => {
+const addToken = ([{children}], token) => {
+  children.push(token);
+};
+
+const parse = (template, nmsp, components) => {
   const addStatic = ({index}, content) => {
     const chunk = noSpaces(esx.slice(i, index));
     if (chunk) {
       const {length} = chunk;
       let i = 0, j = i;
       do {
-        j = chunk.indexOf(NUL, i);
+        j = chunk.indexOf('\x00', i);
         if (j < 0)
           addChunk(noSpaces(chunk.slice(i)));
         else {
           addChunk(noSpaces(chunk.slice(i, j)));
-          const token = new Token(INTERPOLATION, VOID, VOID, true, INTERPOLATION_NAME, VOID);
-          addToken(token);
+          const token = new Token(INTERPOLATION, true, INTERPOLATION_NAME);
+          addToken(tree, token);
           updates.push(token);
           i = j + 1;
           if (i === length)
@@ -49,28 +50,23 @@ const parse = (template, nmsp, components, tree) => {
   };
   const addChunk = value => {
     if (value)
-      addToken(new Token(STATIC, VOID, VOID, false, STATIC_NAME, value));
-  };
-  const addToken = token => {
-    tree[0].children.push(token);
+      addToken(tree, new Token(STATIC, false, STATIC_NAME, value));
   };
   const pushTree = token => {
-    if (tree.length)
-      addToken(token);
-    else
-      tree = [token];
-    tree = [token, tree];
+    if (tree)
+      addToken(tree, token);
+    tree = [token, tree || token];
   };
   const updates = [];
-  const esx = template.join(NUL);
+  const esx = template.join('\x00');
   const tag = /(<(\/)?(\S*?)>)|(<(\S+)([^>/]*?)(\/)?>)/g;
-  let match, i = 0;
+  let tree, match, i = 0;
   while (match = tag.exec(esx)) {
     const [content, _1, closing, other, _4, name, attrs, selfClosing] = match;
     switch (content) {
       case '<>': {
         addStatic(match, content);
-        pushTree(new Token(FRAGMENT, EMPTY, [], false, FRAGMENT_NAME, VOID));
+        pushTree(new Token(FRAGMENT, false, FRAGMENT_NAME, FRAGMENT_NAME, EMPTY, []));
         break;
       }
       case '</>': {
@@ -91,21 +87,28 @@ const parse = (template, nmsp, components, tree) => {
             while (match = values.exec(attrs)) {
               const [_0, _1, name, _3, _4, quote, value] = match;
               if (quote)
-                attributes.push(new Token(ATTRIBUTE, VOID, VOID, false, name, value));
+                attributes.push(new Token(ATTRIBUTE, false, name, value));
               else {
-                const type = name ? ATTRIBUTE : INTERPOLATION;
-                const token = new Token(type, VOID, VOID, true, name || INTERPOLATION_NAME, VOID);
+                const token = new Token(
+                  name ? ATTRIBUTE : INTERPOLATION,
+                  true,
+                  name || INTERPOLATION_NAME
+                );
                 attributes.push(token);
                 updates.push(token);
               }
             }
           }
-          const children = selfClosing ? EMPTY : [];
           const tagName = name || other;
           const isComponent = components.has(tagName);
-          const type = isComponent ? COMPONENT : ELEMENT;
-          const value = isComponent ? nmsp[tagName] : VOID;
-          pushTree(new Token(type, attributes, children, false, tagName, value));
+          pushTree(new Token(
+            isComponent ? COMPONENT : ELEMENT,
+            false,
+            tagName,
+            isComponent ? nmsp[tagName] : tagName,
+            attributes,
+            selfClosing ? EMPTY : []
+          ));
           if (selfClosing)
             tree = tree[1];
         }
@@ -113,11 +116,10 @@ const parse = (template, nmsp, components, tree) => {
       }
     }
   }
-  const token = tree[0];
   const arrow = values => {
     for (let i = 0; i < updates.length; i++)
       updates[i].value = values[i];
-    return token;
+    return tree;
   };
   templates.set(template, arrow);
   return arrow;
@@ -130,11 +132,11 @@ const templates = new WeakMap;
  * @param {object} nmsp the env/namespace that defines components for the resulting tag.
  * @returns {function} the `esx` tag function that will recognize passed components.
  */
-const ESX = (nmsp = OBJECT) => {
+const ESX = (nmsp = {}) => {
   const components = new Set(keys(nmsp));
   return (template, ...values) => (
     templates.get(template) ||
-    parse(template, nmsp, components, EMPTY)
+    parse(template, nmsp, components)
   )(values);
 };
 

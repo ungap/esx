@@ -12,42 +12,38 @@ const {
   assign
 } = require('./constants.js');
 
-class Token {
-  static ATTRIBUTE =      ATTRIBUTE;
-  static COMPONENT =      COMPONENT;
-  static ELEMENT =        ELEMENT;
-  static FRAGMENT =       FRAGMENT;
-  static INTERPOLATION =  INTERPOLATION;
-  static STATIC =         STATIC;
-
-  /** @private */
-  constructor(
-    type,
-    attributes, children,
-    dynamic, name, value
-  ) {
-    this.type = type;
-    this.attributes = attributes;
-    this.children = children;
-    this.name = name;
-    this.value = value;
-    this.dynamic = dynamic;
-  }
-
-  /** @type {object | null} an accessor to forward properties */
-  get properties() {
-    const {attributes} = this;
-    if (attributes !== EMPTY) {
-      const properties = {};
-      for (const entry of attributes) {
-        if (entry.type === ATTRIBUTE)
-          properties[entry.name] = entry.value;
-        else
-          assign(properties, entry.value);
-      }
-      return properties;
-    }
-    return null;
-  }
+function Token(type, dynamic, name, value, attributes, children) {
+  this.type = type;
+  this.attributes = attributes;
+  this.children = children;
+  this.name = name;
+  this.value = value;
+  this.dynamic = dynamic;
 }
-exports.Token = Token
+
+assign(Token, {
+  ATTRIBUTE,
+  COMPONENT,
+  ELEMENT,
+  FRAGMENT,
+  INTERPOLATION,
+  STATIC,
+  prototype: {
+    get properties() {
+      const {attributes} = this;
+      if (attributes !== EMPTY) {
+        const properties = {};
+        for (const entry of attributes) {
+          if (entry.type === ATTRIBUTE)
+            properties[entry.name] = entry.value;
+          else
+            assign(properties, entry.value);
+        }
+        return properties;
+      }
+      return null;
+    }
+  }
+});
+
+exports.Token = Token;

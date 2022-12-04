@@ -28,9 +28,3 @@ exports.STATIC_NAME = STATIC_NAME;
 
 const EMPTY = freeze([]);
 exports.EMPTY = EMPTY;
-const NUL = '\x00';
-exports.NUL = NUL;
-const OBJECT = {};
-exports.OBJECT = OBJECT;
-const VOID = void 0;
-exports.VOID = VOID;

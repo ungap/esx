@@ -11,43 +11,48 @@ const {
   FRAGMENT_NAME,
   INTERPOLATION_NAME,
   STATIC_NAME,
-  EMPTY,
-  OBJECT,
-  VOID
+  EMPTY
 } = require('./constants.js');
 
 const {Token} = require('./token.js');
 
-const {parse: $parse, stringify: $stringify} = JSON;
+function parse(esx, nmsp, ...rest) {
+  return fromJSON((this || JSON).parse(esx, ...rest), nmsp);
+}
+exports.parse = parse
 
-const parse = (esx, nmsp, ...rest) => fromJSON($parse(esx, ...rest), nmsp);
-exports.parse = parse;
-const stringify = (esx, ...rest) => $stringify(toJSON(esx), ...rest);
-exports.stringify = stringify;
+function stringify(esx, ...rest) {
+  return (this || JSON).stringify(toJSON(esx), ...rest);
+}
+exports.stringify = stringify
 
-const fromJSON = (esx, nmsp = OBJECT) => {
+const fromJSON = (esx, nmsp = {}) => {
   const {type} = esx;
   switch (type) {
     case ATTRIBUTE: {
       const {dynamic, name, value} = esx;
-      return new Token(ATTRIBUTE, VOID, VOID, !!dynamic, name, value);
+      return new Token(ATTRIBUTE, !!dynamic, name, value);
     }
     case COMPONENT:
     case ELEMENT: {
       const {attributes, children, name} = esx;
-      const attrs = attributes ? attributes.map(revive, nmsp) : EMPTY;
-      const childrn = children ? children.map(revive, nmsp) : EMPTY;
-      const value = type === ELEMENT ? VOID : nmsp[name];
-      return new Token(type, attrs, childrn, false, name, value);
+      return new Token(
+        type,
+        false,
+        name,
+        type === ELEMENT ? name : nmsp[name],
+        attributes ? attributes.map(revive, nmsp) : EMPTY,
+        children ? children.map(revive, nmsp) : EMPTY
+      );
     }
     case FRAGMENT:
-      return new Token(type, VOID, esx.children.map(revive, nmsp), false, FRAGMENT_NAME, VOID);
+      return new Token(type, false, FRAGMENT_NAME, FRAGMENT_NAME, EMPTY, esx.children.map(revive, nmsp));
     case INTERPOLATION: {
       const {value: v} = esx;
-      return new Token(type, VOID, VOID, true, INTERPOLATION_NAME, v.i || fromJSON(v, nmsp));
+      return new Token(type, true, INTERPOLATION_NAME, v.i || fromJSON(v, nmsp));
     }
     case STATIC:
-      return new Token(type, VOID, VOID, false, STATIC_NAME, esx.value);
+      return new Token(type, false, STATIC_NAME, esx.value);
   }
 };
 exports.fromJSON = fromJSON;

@@ -16,6 +16,3 @@ export const INTERPOLATION_NAME = '#interpolation';
 export const STATIC_NAME = '#static';
 
 export const EMPTY = freeze([]);
-export const NUL = '\x00';
-export const OBJECT = {};
-export const VOID = void 0;
