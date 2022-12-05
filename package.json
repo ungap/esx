@@ -36,6 +36,10 @@
       "import": "./esm/index.js",
       "default": "./cjs/index.js"
     },
+    "./constants": {
+      "import": "./esm/constants.js",
+      "default": "./cjs/constants.js"
+    },
     "./json": {
       "import": "./esm/json.js",
       "default": "./cjs/json.js"
