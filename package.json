@@ -1,6 +1,6 @@
 {
   "name": "@ungap/esx",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "",
   "main": "./cjs/index.js",
   "scripts": {
