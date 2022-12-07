@@ -103,4 +103,21 @@ assertFields(outcome.children[2], {
   value: ' c'
 });
 
+
+var outcome = esx`
+  <>
+    <Component />
+    <Component />
+  </>
+`;
+
+assertFields(outcome.children[0], {
+  type: Token.COMPONENT,
+  value: Component
+});
+assertFields(outcome.children[1], {
+  type: Token.COMPONENT,
+  value: Component
+});
+
 function Component() {}

@@ -44,6 +44,10 @@
       "import": "./esm/json.js",
       "default": "./cjs/json.js"
     },
+    "./token": {
+      "import": "./esm/token.js",
+      "default": "./cjs/token.js"
+    },
     "./package.json": "./package.json"
   }
 }
