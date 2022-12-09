@@ -1,91 +1,68 @@
 'use strict';
 /** (c) Andrea Giammarchi - ISC */
 
-const {
-  ATTRIBUTE,
-  COMPONENT,
-  ELEMENT,
-  FRAGMENT,
-  INTERPOLATION,
-  STATIC,
-  FRAGMENT_NAME,
-  INTERPOLATION_NAME,
-  STATIC_NAME,
-  EMPTY
-} = require('./constants.js');
-
 const {Token} = require('./token.js');
+const {EMPTY} = require('./constants.js');
 
 function parse(esx, nmsp, ...rest) {
-  return fromJSON((this || JSON).parse(esx, ...rest), nmsp);
+  const ids = (this || JSON).parse(esx, ...rest);
+  return fromJSON.call({ids, nmsp: nmsp || globalThis}, ids.pop());
 }
 exports.parse = parse
 
 function stringify(esx, ...rest) {
-  return (this || JSON).stringify(toJSON(esx), ...rest);
+  const ids = [];
+  const json = toJSON.call(ids, esx);
+  ids.push(json);
+  return (this || JSON).stringify(ids, ...rest);
 }
 exports.stringify = stringify
 
-const fromJSON = (esx, nmsp = {}) => {
+function fromJSON(esx) {
   const {type} = esx;
   switch (type) {
-    case ATTRIBUTE: {
-      const {dynamic, name, value} = esx;
-      return new Token(ATTRIBUTE, !!dynamic, name, value);
+    case Token.COMPONENT:
+      esx.value = this.nmsp[esx.name];
+    case Token.ELEMENT:
+    case Token.FRAGMENT: {
+      if (esx.hasOwnProperty('id'))
+        Object.setPrototypeOf(esx, Token.prototype).id = this.ids[esx.id];
+      esx.attributes = (esx.attributes || EMPTY).map(fromJSON, this);
+      esx.children = (esx.children || EMPTY).map(fromJSON, this);
+      return esx;
     }
-    case COMPONENT:
-    case ELEMENT: {
-      const {attributes, children, name} = esx;
-      return new Token(
-        type,
-        false,
-        name,
-        type === ELEMENT ? name : nmsp[name],
-        attributes ? attributes.map(revive, nmsp) : EMPTY,
-        children ? children.map(revive, nmsp) : EMPTY
-      );
-    }
-    case FRAGMENT:
-      return new Token(type, false, FRAGMENT_NAME, FRAGMENT_NAME, EMPTY, esx.children.map(revive, nmsp));
-    case INTERPOLATION: {
+    case Token.INTERPOLATION: {
       const {value: v} = esx;
-      return new Token(type, true, INTERPOLATION_NAME, v.i || fromJSON(v, nmsp));
+      return {type: Token.INTERPOLATION, value: v && (v.i || fromJSON.call(this, v))};
     }
-    case STATIC:
-      return new Token(type, false, STATIC_NAME, esx.value);
   }
+  return esx;
 };
-exports.fromJSON = fromJSON;
 
-const toJSON = esx => {
+function toJSON(esx) {
   const {type} = esx;
   switch (type) {
-    case ATTRIBUTE: {
-      const {dynamic, name, value} = esx;
-      return dynamic ? {type, dynamic: 1, name, value} : {type, name, value};
+    case Token.COMPONENT:
+    case Token.ELEMENT:
+    case Token.FRAGMENT: {
+      const token = new Token;
+      token.type = type;
+      if (esx.hasOwnProperty('id')) {
+        const i = this.indexOf(esx.id);
+        token.id = i < 0 ? (this.push(esx.id) - 1) : i;
+      }
+      const {attributes, children} = esx;
+      if (attributes.length)
+        token.attributes = attributes;
+      if (children.length)
+        token.children = children.map(toJSON, this);
+      if (esx.name)
+        token.name = esx.name;
+      return token;
     }
-    case COMPONENT:
-    case ELEMENT: {
-      const {attributes, children, name} = esx;
-      const json = {type, name};
-      if (attributes !== EMPTY)
-        json.attributes = attributes.map(toJSON);
-      if (children !== EMPTY)
-        json.children = children.map(toJSON);
-      return json;
-    }
-    case FRAGMENT:
-      return {type, children: esx.children.map(toJSON)};
-    case INTERPOLATION: {
+    case Token.INTERPOLATION:
       const {value} = esx;
-      return {type, value: value instanceof Token ? toJSON(value) : {i: value}};
-    }
-    case STATIC:
-      return {type, value: esx.value};
+      return {...esx, value: value instanceof Token ? toJSON.call(this, value) : {i: value}};
   }
+  return esx;
 };
-exports.toJSON = toJSON;
-
-function revive(esx) {
-  return fromJSON(esx, this);
-}

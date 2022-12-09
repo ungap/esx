@@ -1,49 +1,26 @@
 'use strict';
 /** (c) Andrea Giammarchi - ISC */
 
-const {
-  ATTRIBUTE,
-  COMPONENT,
-  ELEMENT,
-  FRAGMENT,
-  INTERPOLATION,
-  STATIC,
-  EMPTY,
-  assign
-} = require('./constants.js');
-
-function Token(type, dynamic, name, value, attributes, children) {
-  this.type = type;
-  this.attributes = attributes;
-  this.children = children;
-  this.name = name;
-  this.value = value;
-  this.dynamic = dynamic;
-}
-
-assign(Token, {
-  ATTRIBUTE,
-  COMPONENT,
-  ELEMENT,
-  FRAGMENT,
-  INTERPOLATION,
-  STATIC,
-  prototype: {
-    get properties() {
-      const {attributes} = this;
-      if (attributes !== EMPTY) {
-        const properties = {};
-        for (const entry of attributes) {
-          if (entry.type === ATTRIBUTE)
-            properties[entry.name] = entry.value;
-          else
-            assign(properties, entry.value);
-        }
-        return properties;
+class Token {
+  static ATTRIBUTE =      1;
+  static COMPONENT =      2;
+  static ELEMENT =        3;
+  static FRAGMENT =       4;
+  static INTERPOLATION =  5;
+  static STATIC =         6;
+  get properties() {
+    const {attributes} = this;
+    if (attributes.length) {
+      const properties = {};
+      for (const entry of attributes) {
+        if (entry.type < 2)
+          properties[entry.name] = entry.value;
+        else
+          Object.assign(properties, entry.value);
       }
-      return null;
+      return properties;
     }
+    return null;
   }
-});
-
-exports.Token = Token;
+}
+exports.Token = Token

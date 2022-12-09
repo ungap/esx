@@ -1,7 +1,7 @@
 (async () => {
 
-  const {ESX} = await import('../es.js');
-  const {toJSON, fromJSON} = await import('../json.js');
+  const {ESX} = await import('../esm/index.js');
+  const {stringify, parse} = await import('../esm/json.js');
 
   const esx = ESX({
     Object,
@@ -73,12 +73,11 @@
   output = program(6, 7, 8, 9, 0);
   console.timeEnd('warm update');
 
-  console.time('toJSON');
-  output = toJSON(output);
-  console.timeEnd('toJSON');
+  console.time('stringify');
+  output = stringify(output);
+  console.timeEnd('stringify');
 
-  console.time('fromJSON');
-  output = fromJSON(output);
-  console.timeEnd('fromJSON');
-
+  console.time('parse');
+  output = parse(output);
+  console.timeEnd('parse');
 })();
