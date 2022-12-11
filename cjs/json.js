@@ -25,11 +25,11 @@ function fromJSON(esx) {
       esx.value = this.nmsp[esx.name];
     case Token.ELEMENT:
     case Token.FRAGMENT: {
-      if (esx.hasOwnProperty('id'))
-        Object.setPrototypeOf(esx, Token.prototype).id = this.ids[esx.id];
       esx.attributes = (esx.attributes || EMPTY).map(fromJSON, this);
       esx.children = (esx.children || EMPTY).map(fromJSON, this);
-      return esx;
+      if (esx.hasOwnProperty('id'))
+        esx.id = this.ids[esx.id];
+      return Object.setPrototypeOf(esx, Token.prototype);
     }
     case Token.INTERPOLATION: {
       const {value: v} = esx;

@@ -18,6 +18,7 @@ const attribute = (dynamic, name, value) => ({
 });
 
 const node = (type, attributes, children, name, value) => ({
+  [NUL + 'p']: NUL + 0,
   type,
   attributes: attributes === EMPTY ? (NUL + 1) : attributes,
   children: children === EMPTY ? (NUL + 1) : children,
@@ -121,12 +122,13 @@ const parse = (template, nmsp, components) => {
   tree.id = NUL + 2;
   const result = {
     f: Function(
-      `return Object.setPrototypeOf(${
+      `return ${
         JSON.stringify(tree).replace(
-          /"\\u0000(a?)(\d+)"/g,
-          (_, a, i) => `${a ? 'arguments' : 'this'}[${i}]`
+          /"\\u0000([ap]?)(\d*)"/g,
+          (_, a, i) =>
+            a === 'p' ? '__proto__' : `${a ? 'arguments' : 'this'}[${i}]`
         )
-      },this[0])`),
+      }`),
     c: context
   };
   templates.set(template, result);
