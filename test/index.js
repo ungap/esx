@@ -1,5 +1,8 @@
 const {ESX, Token} = require('../cjs/index.js');
 
+function Component() {}
+Component.Nested = function () {};
+
 const assert = (value, expected, message = `expected: ${expected} - received: ${value}`) => {
   if (value !== expected)
     throw new Error(message);
@@ -103,6 +106,12 @@ assertFields(outcome.children[2], {
   value: ' c'
 });
 
+var outcome = esx`<Component.Nested />`;
+assertFields(outcome, {
+  type: Token.COMPONENT,
+  name: 'Component.Nested',
+  value: Component.Nested
+});
 
 var outcome = esx`
   <>
@@ -119,5 +128,3 @@ assertFields(outcome.children[1], {
   type: Token.COMPONENT,
   value: Component
 });
-
-function Component() {}
