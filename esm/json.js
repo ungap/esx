@@ -1,7 +1,7 @@
 /** (c) Andrea Giammarchi - ISC */
 
 import {Token} from './token.js';
-import {EMPTY} from './constants.js';
+import {EMPTY, target} from './constants.js';
 
 export function parse(esx, nmsp, ...rest) {
   const ids = (this || JSON).parse(esx, ...rest);
@@ -19,7 +19,7 @@ function fromJSON(esx) {
   const {type} = esx;
   switch (type) {
     case Token.COMPONENT:
-      esx.value = this.nmsp[esx.name];
+      esx.value = esx.name.split('.').reduce(target, this.nmsp);
     case Token.ELEMENT:
     case Token.FRAGMENT: {
       esx.attributes = (esx.attributes || EMPTY).map(fromJSON, this);

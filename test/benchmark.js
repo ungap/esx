@@ -3,15 +3,7 @@
   const {ESX} = await import('../esm/index.js');
   const {stringify, parse} = await import('../esm/json.js');
 
-  const esx = ESX({
-    Object,
-    Array,
-    Uint16Array,
-    Function,
-    String,
-    Boolean,
-    Number
-  });
+  const esx = ESX();
 
   const program = (a, b, c, d, e) => esx`
     <Object>

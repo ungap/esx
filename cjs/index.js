@@ -2,7 +2,7 @@
 /** (c) Andrea Giammarchi - ISC */
 
 const {Token} = require('./token.js');
-const {EMPTY} = require('./constants.js');
+const {EMPTY, target} = require('./constants.js');
 
 const NUL = '\x00';
 
@@ -58,10 +58,6 @@ const parse = (template, nmsp, components) => {
     if (tree) addToken(token);
     tree = [token, tree || token];
   };
-  const getKey = value => {
-    const i = context.indexOf(value);
-    return NUL + (i < 0 ? (context.push(value) - 1) : i);
-  };
   const context = [Token.prototype, EMPTY, {}];
   const esx = template.join('\x00');
   let tree, i = 0, updates = 0;
@@ -103,13 +99,20 @@ const parse = (template, nmsp, components) => {
             }
           }
           const tagName = name || other;
-          const isComponent = components.has(tagName);
+          const splitted = tagName.split('.');
+          const isComponent = components.has(splitted[0]);
+          let value = tagName;
+          if (isComponent) {
+            const component = splitted.reduce(target, nmsp);
+            const i = context.indexOf(component);
+            value = NUL + (i < 0 ? (context.push(component) - 1) : i);
+          }
           pushTree(node(
             isComponent ? Token.COMPONENT : Token.ELEMENT,
             attributes,
             selfClosing ? EMPTY : [],
             tagName,
-            isComponent ? getKey(nmsp[tagName]) : tagName
+            value
           ));
           if (selfClosing)
             tree = tree[1];
