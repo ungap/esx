@@ -64,32 +64,6 @@ Differently from other solutions based either on *DOM* or callbacks, *ESX* is si
 
 Thanks to its simple and unified *Token* shape, it can be serialized as compact, yet readable, *JSON*, surviving cross realm or environment boundaries.
 
-In order to achieve this, a few handy utilities are provided through the `@ungap/esx/json` helper:
-
-```js
-import {ESX, Token} from '@ungap/esx';
-import {toJSON, fromJSON} from '@ungap/esx/json';
-
-const esx = ESX({Comp});
-
-const program = esx`
-  <div data-any="value">
-    <Comp a="1" b=${2} />
-  </div>
-`;
-
-const json = toJSON(program);
-// JSON.stringify(json)
-
-// revive all the tokens at once
-// note: the object with components, if present,
-//       must be provided
-const newProgram = fromJSON(json, {Comp});
-
-function Comp() {}
-```
-
-To simplify even further serialization, `stringify` and `parse` are also offered as utilities, allowing extra parameters too.
 
 ```js
 import {ESX, Token} from '@ungap/esx';
@@ -152,8 +126,8 @@ function B() {}
 <details>
 <summary><strong>TODOs / Help needed</strong></summary>
 
-- [ ] decide how to deal with types for TypeScript users / improve JSDoc TS at least around exported utilities.
-- [ ] align the [Babel transformer](https://github.com/ungap/babel-plugin-transform-esx) to provide the same uniqueness around tokens, so that each token is created once and only updates happen on demand.
+- [x] decide how to deal with types for TypeScript users / improve JSDoc TS at least around exported utilities.
+- [x] align the [Babel transformer](https://github.com/ungap/babel-plugin-transform-esx) to provide the same uniqueness around tokens, so that each token is created once and only updates happen on demand.
 - [ ] a *VSCode* compatible syntax highlighter to see *ESX as Template Literal* the same as *ESX* or *JSX*, with the invetibale `${}` interpolation difference, yet exactly the same contraints and highlights *JSX* has.
 - [ ] a library to showcase *ESX*, either upgrading *udomsay* to use this instead of the [Babel transformer](https://github.com/ungap/babel-plugin-transform-esx), or creating a variant of that library based on this project.
 
