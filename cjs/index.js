@@ -1,8 +1,9 @@
 'use strict';
 /** (c) Andrea Giammarchi - ISC */
 
-const {Token} = require('./token.js');
-const {EMPTY, target} = require('./constants.js');
+const EMPTY = (m => /* c8 ignore start */ m.__esModule ? m.default : m /* c8 ignore stop */)(require('@webreflection/empty/array'));
+const Token = (m => /* c8 ignore start */ m.__esModule ? m.default : m /* c8 ignore stop */)(require('./token.js'));
+const target = (m => /* c8 ignore start */ m.__esModule ? m.default : m /* c8 ignore stop */)(require('./target.js'));
 
 const NUL = '\x00';
 

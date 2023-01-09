@@ -1,7 +1,8 @@
 /** (c) Andrea Giammarchi - ISC */
 
-import {Token} from './token.js';
-import {EMPTY, target} from './constants.js';
+import EMPTY from '@webreflection/empty/array';
+import Token from './token.js';
+import target from './target.js';
 
 export function parse(esx, nmsp, ...rest) {
   const ids = (this || JSON).parse(esx, ...rest);

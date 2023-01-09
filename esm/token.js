@@ -1,6 +1,6 @@
 /** (c) Andrea Giammarchi - ISC */
 
-export class Token {
+export default class Token {
   static ATTRIBUTE =      1;
   static COMPONENT =      2;
   static ELEMENT =        3;

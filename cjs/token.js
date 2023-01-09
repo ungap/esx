@@ -1,7 +1,7 @@
 'use strict';
 /** (c) Andrea Giammarchi - ISC */
 
-class Token {
+module.exports = class Token {
   static ATTRIBUTE =      1;
   static COMPONENT =      2;
   static ELEMENT =        3;
@@ -23,4 +23,3 @@ class Token {
     return null;
   }
 }
-exports.Token = Token
