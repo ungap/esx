@@ -84,7 +84,7 @@ const parse = (template, nmsp, components) => {
             attributes = [];
             for (
               const [_0, _1, name, _3, _4, quote, value] of
-              attrs.matchAll(/((\S+)=((('|")([^\5]*)\5)|\x00)|\x00)/g)
+              attrs.matchAll(/((\S+)=((('|")([^\5]*?)\5)|\x00)|\x00)/g)
             ) {
               if (quote)
                 attributes.push(attribute(false, name, value));

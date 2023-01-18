@@ -128,3 +128,13 @@ assertFields(outcome.children[1], {
   type: Token.COMPONENT,
   value: Component
 });
+
+const button = ESX({
+  Button() {
+    return arguments;
+  }
+})`<Button id='run' text='Create 1,000 rows' fn=${ console.log } />`;
+assert(button.attributes.length, 3);
+assert(button.attributes[0].value, 'run');
+assert(button.attributes[1].value, 'Create 1,000 rows');
+assert(button.attributes[2].value, console.log);
