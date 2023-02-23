@@ -82,7 +82,7 @@ const program = esx`
 const str = stringify(program, ...rest);
 
 // JSON.parse(str, ...rest)
-const revived = fromJSON(str, environment, ...rest);
+const revived = parse(str, environment, ...rest);
 
 function A() {}
 function B() {}
@@ -129,7 +129,7 @@ function B() {}
 - [x] decide how to deal with types for TypeScript users / improve JSDoc TS at least around exported utilities.
 - [x] align the [Babel transformer](https://github.com/ungap/babel-plugin-transform-esx) to provide the same uniqueness around tokens, so that each token is created once and only updates happen on demand.
 - [ ] a *VSCode* compatible syntax highlighter to see *ESX as Template Literal* the same as *ESX* or *JSX*, with the invetibale `${}` interpolation difference, yet exactly the same contraints and highlights *JSX* has.
-- [ ] a library to showcase *ESX*, either upgrading *udomsay* to use this instead of the [Babel transformer](https://github.com/ungap/babel-plugin-transform-esx), or creating a variant of that library based on this project.
+- [x] a library to showcase *ESX*, either upgrading *udomsay* to use this instead of the [Babel transformer](https://github.com/ungap/babel-plugin-transform-esx), or creating a variant of that library based on this project. **Update** latest *udomsay* is based on *ESX* 🥳
 
 </details>
 
