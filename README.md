@@ -1,6 +1,6 @@
 # ESX as Template Literal Tag
 
-[![build status](https://github.com/ungap/esx/actions/workflows/node.js.yml/badge.svg)](https://github.com/ungap/esx/actions) [![Coverage Status](https://coveralls.io/repos/github/ungap/esx/badge.svg?branch=main)](https://coveralls.io/github/ungap/esx?branch=main) [![CSP strict](https://webreflection.github.io/csp/strict.svg)](https://webreflection.github.io/csp/#-csp-strict)
+[![build status](https://github.com/ungap/esx/actions/workflows/node.js.yml/badge.svg)](https://github.com/ungap/esx/actions) [![Coverage Status](https://coveralls.io/repos/github/ungap/esx/badge.svg?branch=main)](https://coveralls.io/github/ungap/esx?branch=main) [![CSP friendly](https://webreflection.github.io/csp/friendly.svg)](https://webreflection.github.io/csp/#-csp-friendly)
 
 <sup><sub>**EXPERIMENTAL** ⚠</sub></sup>
 
